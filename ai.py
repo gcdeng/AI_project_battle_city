@@ -6,6 +6,7 @@ import time
 import multiprocessing
 import heapq
 import Queue
+import math
 
 class ai_agent():
 	mapinfo = []
@@ -92,56 +93,71 @@ class ai_agent():
 					move_dir = DIR_LEFT
 
 			'''dodge bullet'''
-			bullet_distance = 100
+			bullet_distance = 80
 			if self.mapinfo[0]:
 				for i in range(len(self.mapinfo[0])):
-					if (self.mapinfo[0][i][0].left in range(self.mapinfo[3][0][0].left, self.mapinfo[3][0][0].left+bullet_distance)) and self.mapinfo[0][i][1] == DIR_LEFT:
-						move_dir = DIR_DOWN
-						if self.player_y in range(21, 26) or (self.player_x, self.player_y+2) in self.walls:
-							move_dir = DIR_UP
-						elif self.mapinfo[0][i][0].top in range(self.mapinfo[3][0][0].top-5, self.mapinfo[3][0][0].top+5):
-							move_dir = DIR_RIGHT
-							# shoot = 1
-						break
+					if self.get_distance(self.mapinfo[0][i][0].left, self.mapinfo[0][i][0].top)<=bullet_distance:
+						if self.mapinfo[0][i][1] == DIR_UP:
+							if self.mapinfo[0][i][0].left % int(self.unit) < 6:
+								move_dir = DIR_LEFT
+								if self.player_x-2<0 or (self.player_x-2, self.player_y) in self.walls:
+									move_dir = DIR_UP
+							if self.mapinfo[0][i][0].left % int(self.unit) > 10:
+								move_dir = DIR_RIGHT
+								if self.player_x+2>25 or (self.player_x+2, self.player_y) in self.walls:
+									move_dir = DIR_UP
+							if (self.mapinfo[0][i][0].left % int(self.unit) == 0) and (self.mapinfo[0][i][0].top-self.mapinfo[3][0][0].top > 0):
+								move_dir = DIR_DOWN
 
-				# for i in range(len(self.mapinfo[0])):
-					if (self.mapinfo[0][i][0].left in range(self.mapinfo[3][0][0].left-bullet_distance, self.mapinfo[3][0][0].left)) and self.mapinfo[0][i][1] == DIR_RIGHT:
-						move_dir = DIR_DOWN
-						if self.player_y in range(21, 26) or (self.player_x, self.player_y+2) in self.walls:
-							move_dir = DIR_UP
-						elif self.mapinfo[0][i][0].top in range(self.mapinfo[3][0][0].top-10, self.mapinfo[3][0][0].top+10):
-							move_dir = DIR_LEFT
-							# shoot = 1
-						break
+						elif self.mapinfo[0][i][1] == DIR_RIGHT:
+							if self.mapinfo[0][i][0].top % int(self.unit) < 6:
+								move_dir = DIR_UP
+								if self.player_y-2<0 or (self.player_x, self.player_y-2) in self.walls:
+									move_dir = DIR_RIGHT
+							if self.mapinfo[0][i][0].top % int(self.unit) > 10:
+								move_dir = DIR_DOWN
+								if self.player_y+2>25 or (self.player_x, self.player_y+2) in self.walls:
+									move_dir = DIR_RIGHT
+							if self.mapinfo[0][i][0].top % int(self.unit) == 0 and (self.mapinfo[0][i][0].left-self.mapinfo[3][0][0].left < 0):
+								move_dir = DIR_LEFT
 
-				# for i in range(len(self.mapinfo[0])):
-					if (self.mapinfo[0][i][0].top in range(self.mapinfo[3][0][0].top, self.mapinfo[3][0][0].top+bullet_distance)) and self.mapinfo[0][i][1] == DIR_UP:
-						move_dir = DIR_RIGHT
-						if self.player_x in range(21, 26) or (self.player_x+2, self.player_y) in self.walls:
-							move_dir = DIR_LEFT
-						elif self.mapinfo[0][i][0].left in range(self.mapinfo[3][0][0].left-10, self.mapinfo[3][0][0].left+10):
-							move_dir = DIR_DOWN
-							# shoot = 1
-						break
+						elif self.mapinfo[0][i][1] == DIR_DOWN:
+							if self.mapinfo[0][i][0].left % int(self.unit) < 6:
+								move_dir = DIR_LEFT
+								if self.player_x-2<0 or (self.player_x-2, self.player_y) in self.walls:
+									move_dir = DIR_DOWN
+							if self.mapinfo[0][i][0].left % int(self.unit) > 10:
+								move_dir = DIR_RIGHT
+								if self.player_x+2>25 or (self.player_x+2, self.player_y) in self.walls:
+									move_dir = DIR_DOWN
+							if self.mapinfo[0][i][0].left % int(self.unit) == 0 and (self.mapinfo[0][i][0].top-self.mapinfo[3][0][0].top < 0):
+								move_dir = DIR_UP
 
-				# for i in range(len(self.mapinfo[0])):
-					if (self.mapinfo[0][i][0].top in range(self.mapinfo[3][0][0].top-bullet_distance, self.mapinfo[3][0][0].top)) and self.mapinfo[0][i][1] == DIR_DOWN:
-						move_dir = DIR_RIGHT
-						if self.player_x in range(21, 26) or (self.player_x+2, self.player_y) in self.walls:
-							move_dir = DIR_LEFT
-						elif self.mapinfo[0][i][0].left in range(self.mapinfo[3][0][0].left-10, self.mapinfo[3][0][0].left+10):
-							move_dir = DIR_UP
-							# shoot = 1
-						break
+						elif self.mapinfo[0][i][1] == DIR_LEFT:
+							if self.mapinfo[0][i][0].top % int(self.unit) < 6:
+								move_dir = DIR_UP
+								if self.player_y-2<0 or (self.player_x, self.player_y-2) in self.walls:
+									move_dir = DIR_LEFT
+							if self.mapinfo[0][i][0].top % int(self.unit) > 10:
+								move_dir = DIR_DOWN
+								if self.player_y+2>25 or (self.player_x, self.player_y+2) in self.walls:
+									move_dir = DIR_LEFT
+							if self.mapinfo[0][i][0].left % int(self.unit) == 0 and (self.mapinfo[0][i][0].left-self.mapinfo[3][0][0].left > 0):
+								move_dir = DIR_RIGHT
 
 			'''protect castel'''
 			# avoid player to shoot castle
-			if (self.player_x in range(10, 16)) and (self.player_y in range(21, 26)) and (self.mapinfo[3][0][1] == DIR_DOWN):
+			if (self.player_x in range(10, 16)) and (self.player_y in range(22, 26)) and (self.mapinfo[3][0][1] == DIR_DOWN):
 				# move_dir = DIR_UP
 				shoot = 0
-			if (self.player_y in range(21, 26)) and (self.mapinfo[3][0][1] == DIR_RIGHT or self.mapinfo[3][0][1] == DIR_LEFT):
-				# move_dir = DIR_UP
+			if (self.player_y in range(22, 26)) and (self.mapinfo[3][0][1] == DIR_RIGHT or self.mapinfo[3][0][1] == DIR_LEFT):
 				shoot = 0
+			# if (self.player_y in range(22, 26)) and (self.player_x in range(0, 13)) and (self.mapinfo[3][0][1] == DIR_RIGHT):
+			# 	# move_dir = DIR_UP
+			# 	shoot = 0
+			# if (self.player_y in range(22, 26)) and (self.player_x in range(13, 26)) and (self.mapinfo[3][0][1] == DIR_LEFT):
+			# 	# move_dir = DIR_UP
+			# 	shoot = 0
 
 			'''action'''
 			keep_action = 0
@@ -193,7 +209,7 @@ class ai_agent():
 				self.enemy_y = int(round(self.mapinfo[1][i][0].top/self.unit))
 				return
 			'''attack nearby enemy'''
-			if self.mapinfo[1][i][0].left in range(self.mapinfo[3][0][0].left-50, self.mapinfo[3][0][0].left+50) and self.mapinfo[1][i][0].top in range(self.mapinfo[3][0][0].top-50, self.mapinfo[3][0][0].top+50):
+			if self.get_distance(self.mapinfo[1][i][0].left, self.mapinfo[1][i][0].top)<=50:
 				self.enemy_x = int(round(self.mapinfo[1][i][0].left/self.unit))
 				self.enemy_y = int(round(self.mapinfo[1][i][0].top/self.unit))
 				return
@@ -225,6 +241,9 @@ class ai_agent():
 			if ((self.reachable_grid[i][0]+1, self.reachable_grid[i][1]) in self.walls) or ((self.reachable_grid[i][0], self.reachable_grid[i][1]+1) in self.walls) or ((self.reachable_grid[i][0]+1, self.reachable_grid[i][1]+1) in self.walls):
 				self.walls.append(self.reachable_grid[i])
 		return
+
+	def get_distance(self, x, y):
+		return math.sqrt((self.mapinfo[3][0][0].left-x)**2 + (self.mapinfo[3][0][0].top-y)**2)
 
 class Cell(object):
     def __init__(self, x, y, reachable):
